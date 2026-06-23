@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheckIn | แดชบอร์ดอาจารย์</title>
+  <style>
+    :root { --navy:#1e3a5f; --navy-2:#294d79; --blue:#3186d8; --sky:#eaf5ff; --page:#f5f8fc; --text:#162940; --muted:#6d7c90; --line:#e7edf4; --green:#1c9b71; --orange:#ed9a36; --shadow:0 12px 34px rgba(24,55,92,.09); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--text); background:var(--page); font-family:"Noto Sans Thai", "Segoe UI", Tahoma, sans-serif; font-size:15px; }
+    button { font:inherit; cursor:pointer; border:0; }
+    .app { min-height:100vh; display:grid; grid-template-columns:254px 1fr; }
+    .sidebar { position:fixed; inset:0 auto 0 0; width:254px; display:flex; flex-direction:column; padding:25px 16px 18px; background:linear-gradient(180deg,#1d3a5d,#173252); color:#fff; z-index:20; }
+    .brand { display:flex; align-items:center; gap:11px; padding:0 10px 31px; font-weight:700; letter-spacing:.1px; font-size:19px; }
+    .brand-mark { width:35px;height:35px; display:grid;place-items:center; border-radius:11px; background:#fff; color:var(--navy); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .brand-mark svg { width:20px; }
+    .nav-label { margin:5px 11px 9px; color:#9eb7d2; font-size:11px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; }
+    .nav-item { width:100%; display:flex; gap:13px; align-items:center; padding:12px 13px; margin:2px 0; color:#d4e2f1; background:transparent; border-radius:10px; text-align:left; transition:.2s; }
+    .nav-item:hover,.nav-item.active { color:#fff; background:rgba(255,255,255,.13); }
+    .nav-item.active { box-shadow:inset 3px 0 0 #6db9ff; }
+    .nav-icon { width:20px;height:20px; flex:0 0 20px; }
+    .sidebar-bottom { margin-top:auto; }
+    .help-card { margin:0 4px 13px; padding:14px; border-radius:13px; background:rgba(255,255,255,.1); color:#c9dbed; font-size:12px; line-height:1.5; }
+    .help-card strong { display:block; color:#fff; margin-bottom:3px; }
+    .logout { color:#cfe0f1; }
+    .main { grid-column:2; min-width:0; }
+    .topbar { height:76px; display:flex; align-items:center; justify-content:space-between; padding:0 38px; background:#fff; border-bottom:1px solid var(--line); }
+    .top-title { font-size:17px; font-weight:700; }
+    .top-actions { display:flex;align-items:center; gap:20px; }
+    .notice { position:relative; color:#52667c; background:transparent; padding:7px; }
+    .notice-dot { position:absolute; top:5px;right:5px; width:7px;height:7px; border-radius:50%; background:#ec5c61; border:1.5px solid #fff; }
+    .profile { display:flex;align-items:center;gap:10px; padding-left:16px; border-left:1px solid var(--line); }
+    .avatar { width:37px;height:37px; display:grid;place-items:center; border-radius:50%; background:#d8ebfb; color:#26679f; font-weight:700; }
+    .profile-text strong,.profile-text span { display:block; } .profile-text strong { font-size:13px; } .profile-text span { color:var(--muted); font-size:11px; margin-top:1px; }
+    .menu-toggle { display:none; background:transparent; color:var(--navy); padding:4px; }
+    .content { max-width:1440px; margin:auto; padding:34px 38px 50px; }
+    .welcome { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:27px; }
+    h1 { margin:0 0 7px; font-size:28px; letter-spacing:-.4px; } .subtitle { color:var(--muted); margin:0; }
+    .semester { display:flex; align-items:center; gap:10px; padding:10px 13px; background:#fff; border:1px solid var(--line); border-radius:9px; color:#53677d; font-size:13px; white-space:nowrap; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:31px; }
+    .stat-card { min-height:122px; padding:21px 22px; background:#fff; border:1px solid var(--line); border-radius:15px; box-shadow:0 4px 16px rgba(24,55,92,.035); display:flex; justify-content:space-between; }
+    .stat-label { color:var(--muted); font-size:13px; } .stat-value { margin-top:10px; font-size:28px; font-weight:750; } .stat-unit { font-size:13px; color:var(--muted); font-weight:500; margin-left:2px; }
+    .stat-icon { width:43px; height:43px; display:grid;place-items:center; border-radius:12px; background:var(--sky); color:var(--blue); } .stat-icon.green{background:#e9f8f3;color:var(--green)} .stat-icon.orange{background:#fff5e8;color:var(--orange)}
+    .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:15px; } .section-head h2 { margin:0; font-size:18px; } .link-btn { color:#287fcd; background:transparent; font-size:13px; font-weight:650; }
+    .courses { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .course-card { min-height:207px; position:relative; padding:20px; background:#fff; border:1px solid var(--line); border-radius:15px; box-shadow:0 4px 16px rgba(24,55,92,.035); overflow:hidden; }
+    .course-card:before { content:""; position:absolute; left:0;right:0;top:0;height:4px; background:var(--blue); } .course-card:nth-child(2):before{background:#2fac87}.course-card:nth-child(3):before{background:#d68a37}
+    .course-code { color:#4c94d6; font-size:12px; font-weight:750; letter-spacing:.5px; } .course-card:nth-child(2) .course-code{color:#229073}.course-card:nth-child(3) .course-code{color:#b7722b}
+    .course-card h3 { min-height:48px; margin:7px 0 8px; font-size:17px; line-height:1.45; } .students { color:var(--muted); font-size:13px; display:flex; gap:6px; align-items:center; }
+    .start-btn { width:100%; margin-top:18px; padding:10px 13px; border-radius:9px; background:var(--navy); color:#fff; font-weight:650; transition:.2s; } .start-btn:hover{background:var(--navy-2); transform:translateY(-1px)}
+    .quick { display:grid; grid-template-columns:1.1fr .9fr; gap:22px; margin-top:31px; }
+    .panel { background:#fff; border:1px solid var(--line); border-radius:15px; box-shadow:0 4px 16px rgba(24,55,92,.035); padding:21px; }
+    .quick-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+    .quick-btn { display:flex; min-height:103px; flex-direction:column; align-items:flex-start; justify-content:space-between; padding:14px; color:var(--text); background:#f8fbfe; border:1px solid #edf2f7; border-radius:11px; text-align:left; font-size:13px; font-weight:650; } .quick-btn:hover { border-color:#bcdcf5; background:#f1f8ff; }
+    .quick-btn svg { width:21px; color:#408dce; }
+    .activity { list-style:none; padding:1px 0 0; margin:0; }.activity li { display:grid; grid-template-columns:9px 1fr auto; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid #edf1f5; font-size:13px; }.activity li:last-child{border:0}.activity-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}.activity li:nth-child(2) .activity-dot{background:var(--blue)}.activity li:nth-child(3) .activity-dot{background:var(--orange)}.activity time{color:#93a0b0;font-size:11px;white-space:nowrap}
+    .toast { position:fixed; right:28px; bottom:26px; display:flex; align-items:center; gap:10px; max-width:355px; padding:14px 17px; color:#fff; background:#193c5f; border-radius:12px; box-shadow:0 16px 36px rgba(11,34,58,.25); transform:translateY(120px); opacity:0; transition:.35s; z-index:50; }.toast.show{transform:translateY(0);opacity:1}.toast-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#2fac87}
+    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(13,31,51,.42); z-index:60; }.modal.open{display:flex}.modal-card{width:min(470px,100%);padding:27px;background:#fff;border-radius:17px;box-shadow:0 22px 60px rgba(0,0,0,.25)}.modal-card h2{margin:0 0 8px;font-size:21px}.modal-card p{color:var(--muted);line-height:1.6}.gps-state{display:flex;gap:10px;align-items:center;margin:20px 0;padding:13px;border-radius:10px;background:#eff8f4;color:#187d5d;font-size:13px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.secondary-btn{padding:10px 14px;border:1px solid #d9e4ef;border-radius:9px;color:#52677f;background:#fff}.primary-btn{padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-weight:650}
+    @media (max-width:1050px){.courses{grid-template-columns:1fr 1fr}.courses .course-card:last-child{grid-column:span 2}.quick{grid-template-columns:1fr}.sidebar{width:220px}.app{grid-template-columns:220px 1fr}.content,.topbar{padding-left:28px;padding-right:28px}}
+    @media (max-width:760px){.app{display:block}.sidebar{transform:translateX(-100%);width:270px;transition:transform .25s}.sidebar.open{transform:translateX(0);box-shadow:12px 0 30px rgba(14,34,55,.22)}.main{width:100%}.topbar{height:63px;padding:0 17px}.menu-toggle{display:block}.top-title{font-size:15px}.profile-text{display:none}.profile{padding-left:9px}.top-actions{gap:8px}.content{padding:25px 17px 40px}.welcome{align-items:flex-start;flex-direction:column;margin-bottom:20px}h1{font-size:24px}.stats{grid-template-columns:1fr;gap:11px;margin-bottom:25px}.stat-card{min-height:94px;padding:17px}.courses{grid-template-columns:1fr}.courses .course-card:last-child{grid-column:auto}.course-card{min-height:188px}.quick{margin-top:25px}.quick-actions{grid-template-columns:1fr}.quick-btn{min-height:68px;flex-direction:row;align-items:center}.semester{width:100%;justify-content:center}.toast{right:14px;left:14px;bottom:15px;max-width:none}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">✓</span><span>CheckIn</span></div>
+      <p class="nav-label">เมนูหลัก</p>
+      <button class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg>หน้าหลัก</button>
+      <button class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h5"/></svg>รายวิชาของฉัน</button>
+      <button class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/></svg>ผลการเข้าเรียน</button>
+      <button class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg>รายงาน</button>
+      <div class="sidebar-bottom"><div class="help-card"><strong>ต้องการความช่วยเหลือ?</strong>ดูคู่มือการเริ่มรอบเช็คชื่อ</div><button class="nav-item logout"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17l5-5-5-5M15 12H3M21 3v18H10"/></svg>ออกจากระบบ</button></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู">☰</button><div class="top-title">ระบบเช็คชื่อเข้าเรียน</div><div class="top-actions"><button class="notice" aria-label="การแจ้งเตือน">🔔<span class="notice-dot"></span></button><div class="profile"><div class="avatar">ส</div><div class="profile-text"><strong>อาจารย์สมชาย ใจดี</strong><span>อาจารย์ผู้สอน</span></div></div></div></header>
+      <section class="content">
+        <div class="welcome"><div><h1>สวัสดี, อาจารย์สมชาย ใจดี</h1><p class="subtitle">ติดตามและจัดการการเข้าเรียนของนิสิตได้จากที่นี่</p></div><div class="semester">▣ ภาคเรียน 1 / 2569</div></div>
+        <section class="stats"><article class="stat-card"><div><div class="stat-label">รายวิชาที่สอน</div><div class="stat-value">3 <span class="stat-unit">รายวิชา</span></div></div><div class="stat-icon">▤</div></article><article class="stat-card"><div><div class="stat-label">นิสิตทั้งหมด</div><div class="stat-value">120 <span class="stat-unit">คน</span></div></div><div class="stat-icon green">♙</div></article><article class="stat-card"><div><div class="stat-label">เช็คชื่อวันนี้</div><div class="stat-value">2 <span class="stat-unit">รอบ</span></div></div><div class="stat-icon orange">◷</div></article></section>
+        <section><div class="section-head"><h2>รายวิชาของฉัน</h2><button class="link-btn">ดูทั้งหมด →</button></div><div class="courses"><article class="course-card"><div class="course-code">CS101</div><h3>การเขียนโปรแกรมเบื้องต้น</h3><div class="students">♙ นิสิต 45 คน</div><button class="start-btn" data-course="CS101 การเขียนโปรแกรมเบื้องต้น">เริ่มเช็คชื่อ</button></article><article class="course-card"><div class="course-code">CS205</div><h3>ระบบฐานข้อมูล</h3><div class="students">♙ นิสิต 38 คน</div><button class="start-btn" data-course="CS205 ระบบฐานข้อมูล">เริ่มเช็คชื่อ</button></article><article class="course-card"><div class="course-code">CS310</div><h3>วิศวกรรมซอฟต์แวร์</h3><div class="students">♙ นิสิต 37 คน</div><button class="start-btn" data-course="CS310 วิศวกรรมซอฟต์แวร์">เริ่มเช็คชื่อ</button></article></div></section>
+        <section class="quick"><article class="panel"><div class="section-head"><h2>การดำเนินการด่วน</h2></div><div class="quick-actions"><button class="quick-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/></svg><span>จัดการรายวิชา</span></button><button class="quick-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M7 15l4-4 3 2 5-6"/></svg><span>ดูผลการเข้าเรียน</span></button><button class="quick-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span>ส่งออกรายงาน</span></button></div></article><article class="panel"><div class="section-head"><h2>กิจกรรมล่าสุด</h2><button class="link-btn">ดูทั้งหมด</button></div><ul class="activity"><li><span class="activity-dot"></span><span>CS101: นิสิตเช็คชื่อสำเร็จ 38 คน</span><time>วันนี้ 10:15</time></li><li><span class="activity-dot"></span><span>เริ่มรอบเช็คชื่อรายวิชา CS205</span><time>เมื่อวาน 13:00</time></li><li><span class="activity-dot"></span><span>ส่งออกรายงานการเข้าเรียน CS101</span><time>12 มิ.ย.</time></li></ul></article></section>
+      </section>
+    </main>
+  </div>
+  <div class="modal" id="sessionModal"><div class="modal-card"><h2>เริ่มรอบเช็คชื่อ</h2><p id="courseName">CS101 การเขียนโปรแกรมเบื้องต้น</p><div class="gps-state">✓ ตรวจสอบตำแหน่ง GPS ของอาจารย์แล้ว</div><p>เมื่อเริ่มระบบจะสร้าง QR Code และหมุนเวียนทุก 30 วินาที นักศึกษาต้องอยู่ห่างจากอาจารย์ไม่เกิน 10 เมตร</p><div class="modal-actions"><button class="secondary-btn" id="cancelModal">ยกเลิก</button><button class="primary-btn" id="confirmSession">เริ่มสร้าง QR Code</button></div></div></div>
+  <div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toastText">เริ่มรอบเช็คชื่อแล้ว</span></div>
+  <script>
+    const sidebar=document.getElementById('sidebar'); const modal=document.getElementById('sessionModal'); const toast=document.getElementById('toast'); let currentCourse='';
+    document.getElementById('menuToggle').addEventListener('click',()=>sidebar.classList.toggle('open'));
+    document.querySelectorAll('.start-btn').forEach(btn=>btn.addEventListener('click',()=>{currentCourse=btn.dataset.course;document.getElementById('courseName').textContent=currentCourse;modal.classList.add('open')}));
+    document.getElementById('cancelModal').addEventListener('click',()=>modal.classList.remove('open'));
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+    document.getElementById('confirmSession').addEventListener('click',()=>{modal.classList.remove('open');document.getElementById('toastText').textContent='เริ่มรอบเช็คชื่อ '+currentCourse+' แล้ว';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)});
+  </script>
+</body>
+</html>
